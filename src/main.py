@@ -29,6 +29,11 @@ def saveToFile(filename, data):
             f.write(str(i) + " " + str(data[i]) + "\n")
 
 def main():
+
+    if not os.path.exists(DATA_PATH):
+        print("ERROR  |  Data folder not found. Please create a folder named 'data' and put the datasets inside it.")
+        return
+
     # Dataset selection
     datasets = [[file.replace('.edges', ''), DATA_PATH + file] for file in os.listdir(DATA_PATH) if file.endswith(".edges")]    
     print("Choose a dataset:")
