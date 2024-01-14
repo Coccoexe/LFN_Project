@@ -1,14 +1,48 @@
+# Alessio Cocco 2087635, Andrea Valentinuzzi 2090451, Giovanni Brejc xxxxxxx
+
 import networkx as nx
 import matplotlib.pyplot as plt
 import os
+from tqdm import tqdm
 
 # Constants
 
 data_path = os.getcwd() + "/data/"
 
-def main():
-    print(data_path)
+def compute_centrality(graph: nx.Graph):
+    # Computes degree centrality of each node
+    return nx.degree_centrality(graph)
+
+def compute_clustering_coefficient(graph: nx.Graph):
+    for node in tqdm(graph.nodes()):
+        graph.nodes[node]['clustering_coefficient'] = nx.clustering(graph, node)
     return
+
+def plot_centrality_clustering():
+    return
+
+def main():
+    # Dataset selection
+    datasets = [[file.replace('.edges', ''), data_path + file] for file in os.listdir(data_path) if file.endswith(".edges")]    
+    print("Choose a dataset:")
+    for i, dataset in enumerate(datasets):
+        print(i, dataset[0])
+    index = int(input())
+
+    # Networkx graph object
+    print("\nSTART  |  Reading graph\'", datasets[index][0], "\'...")
+    graph = nx.read_weighted_edgelist(datasets[index][1])
+    print("DONE   |  Graph read\n")
+
+    # 1. Compute degree centrality of each node
+    #compute_centrality(graph)
+
+    # 2. Compute clustering coefficient of each node
+    compute_clustering_coefficient(graph)
+
+    # 3. Plot in scatter plot centrality (x) and clustering coefficient (y)
+
+    
 
 if __name__ == "__main__":
     main()
