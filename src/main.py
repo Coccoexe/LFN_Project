@@ -1,9 +1,19 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import scipy as sp
-import vispy
+import os
+
+# Constants
+
+data_path = os.getcwd() + "/data/"
+
+def main():
+    print(data_path)
+    return
+
+if __name__ == "__main__":
+    main()
+
+exit()
 
 # read the graph from a weighted edges file and create a networkx graph object
 fh = open("C:/Users/giovanni/Desktop/lfn/bio-human-gene1.edges", "rb")
@@ -11,7 +21,7 @@ G = nx.read_weighted_edgelist(fh)
 print("hello")
 fh.close()
 #compute the degree of each node and print the maximum degree and the average degree of the graph G 
-degree_sequence = sorted([d for n, d in G.degree()], reverse=True)
+degree_sequence = sorted([d for n, d in G.degree()], reverse = True)
 dmax = max(degree_sequence)
 davg = np.mean(degree_sequence)
 print("Maximum degree", dmax)
