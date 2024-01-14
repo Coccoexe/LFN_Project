@@ -12,7 +12,8 @@ def degreeCentrality(graph):
     return nk.centrality.DegreeCentrality(graph).run()
 
 def clusteringCoefficient(graph):
-    return nk.centrality.LocalClusteringCoefficient(graph.removeSelfLoops()).run()
+    graph.removeSelfLoops()
+    return nk.centrality.LocalClusteringCoefficient(graph).run()
 
 def plotMetrics():
     return
