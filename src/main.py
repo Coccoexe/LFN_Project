@@ -1,4 +1,4 @@
-# Alessio Cocco 2087635, Andrea Valentinuzzi 2090451, Giovanni Brejc xxxxxxx
+# Alessio Cocco 2087635, Andrea Valentinuzzi 2090451, Giovanni Brejc 2096046
 
 import networkit as nk
 import matplotlib.pyplot as plt
