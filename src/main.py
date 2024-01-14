@@ -1,48 +1,49 @@
 # Alessio Cocco 2087635, Andrea Valentinuzzi 2090451, Giovanni Brejc xxxxxxx
 
-import networkx as nx
+import networkit as nk
 import matplotlib.pyplot as plt
 import os
-from tqdm import tqdm
-
+try:
+    import cugraph as cnx
+    import cudf
+    GPU = True
+except:
+    GPU = False
+    
 # Constants
-
-data_path = os.getcwd() + "/data/"
-
-def compute_centrality(graph: nx.Graph):
-    # Computes degree centrality of each node
-    return nx.degree_centrality(graph)
-
-def compute_clustering_coefficient(graph: nx.Graph):
-    for node in tqdm(graph.nodes()):
-        graph.nodes[node]['clustering_coefficient'] = nx.clustering(graph, node)
-    return
-
-def plot_centrality_clustering():
-    return
+DATA_PATH = os.getcwd() + "/data/"
 
 def main():
     # Dataset selection
-    datasets = [[file.replace('.edges', ''), data_path + file] for file in os.listdir(data_path) if file.endswith(".edges")]    
+    datasets = [[file.replace('.edges', ''), DATA_PATH + file] for file in os.listdir(DATA_PATH) if file.endswith(".edges")]    
     print("Choose a dataset:")
     for i, dataset in enumerate(datasets):
         print(i, dataset[0])
     index = int(input())
 
-    # Networkx graph object
-    print("\nSTART  |  Reading graph\'", datasets[index][0], "\'...")
-    graph = nx.read_weighted_edgelist(datasets[index][1])
-    print("DONE   |  Graph read\n")
+    # Setup graph
+    print("\nGPU    | ", "OK" if GPU else "NO")
+    print("START  |  Reading graph", datasets[index][0], "...")
+    graph = nk.readGraph(datasets[index][1], nk.Format.EdgeList, separator=' ', firstNode=0, continuous=False)
+    print("DONE   |  Graph read!\n")
 
     # 1. Compute degree centrality of each node
-    #compute_centrality(graph)
+    print("START  |  Computing degree centrality...")
+    dc = nk.centrality.DegreeCentrality(graph).run()
+    with open("./output/degree_centrality.txt", "w+") as f:
+        for i in range(graph.numberOfNodes()):
+            f.write(str(i) + " " + str(dc.score(i)) + "\n")
+    print("DONE   |  Degree centrality computed\n")
 
     # 2. Compute clustering coefficient of each node
-    compute_clustering_coefficient(graph)
+    print("START  |  Computing clustering coefficient...")
+    cc = nk.centrality.LocalClusteringCoefficient(graph).run()
+    with open("./output/clustering_coefficient.txt", "w+") as f:
+        for i in range(graph.numberOfNodes()):
+            f.write(str(i) + " " + str(cc.score(i)) + "\n")
+    print("DONE   |  Clustering coefficient computed\n")
 
     # 3. Plot in scatter plot centrality (x) and clustering coefficient (y)
-
-    
 
 if __name__ == "__main__":
     main()
