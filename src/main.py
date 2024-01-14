@@ -36,7 +36,7 @@ def main():
 
     # Setup graph
     print("START  |  Reading graph", datasets[index][0], "...")
-    graph = nk.readGraph(datasets[index][1], nk.Format.EdgeList, separator=' ', firstNode=0, continuous=False)
+    graph = nk.readGraph(datasets[index][1], nk.Format.EdgeList, separator = ' ', firstNode = 0, continuous = False)
     print("DONE   |  Graph read!\n")
 
     # 1. Compute degree centrality of each node
