@@ -15,7 +15,12 @@ def clusteringCoefficient(graph):
     graph.removeSelfLoops()
     return nk.centrality.LocalClusteringCoefficient(graph).run()
 
-def plotMetrics():
+def plotMetrics(name, degrees, clustering):
+    plt.scatter(degrees, clustering)
+    plt.title(name)
+    plt.xlabel("Degree Centrality")
+    plt.ylabel("Clustering coefficient")
+    plt.savefig(OUTPUT_PATH + name + ".png")
     return
 
 def saveToFile(filename, data):
@@ -36,22 +41,25 @@ def main():
 
     # Setup graph
     print("START  |  Reading graph", datasets[index][0], "...")
-    graph = nk.readGraph(datasets[index][1], nk.Format.EdgeList, separator = ' ', firstNode = 0, continuous = False)
+    graph = nk.readGraph(datasets[index][1], nk.Format.EdgeList, separator=' ', firstNode=0, continuous=False)
     print("DONE   |  Graph read!\n")
 
     # 1. Compute degree centrality of each node
     print("START  |  Computing degree centrality...")
     dc = degreeCentrality(graph)
-    saveToFile("degree_centrality", dc.scores())
+    saveToFile(datasets[index][0] + "_degree_centrality", dc.scores())
     print("DONE   |  Degree centrality computed\n")
 
     # 2. Compute clustering coefficient of each node
     print("START  |  Computing clustering coefficient...")
     cc = clusteringCoefficient(graph)
-    saveToFile("clustering_coefficient", cc.scores())
+    saveToFile(datasets[index][0] + "_clustering_coefficient", cc.scores())
     print("DONE   |  Clustering coefficient computed\n")
 
     # 3. Plot in scatter plot centrality (x) and clustering coefficient (y)
+    print("START  |  Plotting metrics...")
+    plotMetrics(datasets[index][0], dc.scores(), cc.scores())
+    print("DONE   |  Metrics PLot saved to file\n")
 
 if __name__ == "__main__":
     main()
