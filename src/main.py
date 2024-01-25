@@ -15,11 +15,22 @@ def clusteringCoefficient(graph):
     graph.removeSelfLoops()
     return nk.centrality.LocalClusteringCoefficient(graph).run()
 
-def plotMetrics(name, degrees, clustering):
-    plt.scatter(degrees, clustering)
+def plotCombinedMetrics(name, degrees, clustering):
+    plt.scatter(degrees, clustering, s = 0.1)
     plt.title(name)
     plt.xlabel("Degree Centrality")
     plt.ylabel("Clustering coefficient")
+    plt.savefig(OUTPUT_PATH + name + ".png")
+    return
+
+def plotHistogram(name, metric, xlabel):
+    nbins, mmt = 200, max(metric)
+    fig, ax = plt.subplots()
+    ax.hist(metric, bins = nbins)
+    ax.set(xlim = (0 - 1 / nbins * mmt, mmt + 1 / nbins * mmt)) # ensure 1 bin clearence on both sides for legibility
+    plt.title(name)
+    plt.xlabel(xlabel)
+    plt.ylabel("Frequency")
     plt.savefig(OUTPUT_PATH + name + ".png")
     return
 
@@ -62,9 +73,18 @@ def main():
     print("DONE   |  Clustering coefficient computed\n")
 
     # 3. Plot in scatter plot centrality (x) and clustering coefficient (y)
-    print("START  |  Plotting metrics...")
-    plotMetrics(datasets[index][0], dc.scores(), cc.scores())
+    print("START  |  Plotting combined metrics...")
+    plotCombinedMetrics(datasets[index][0], dc.scores(), cc.scores())
     print("DONE   |  Metrics PLot saved to file\n")
+
+    # 4. Plot in histogram the distribution of centrality and clustering coefficient separately
+    print("START  |  Plotting degree centrality histogram...")
+    plotHistogram(datasets[index][0] + "DCHist", dc.scores(), "Degree Centrality")
+    print("DONE   |  Degree centrality histogram saved to file\n")
+    print("START  |  Plotting clustering coefficient histogram...")
+    plotHistogram(datasets[index][0] + "CCHist", cc.scores(), "Clustering Coefficient")
+    print("DONE   |  Clustering coefficient histogram saved to file\n")
 
 if __name__ == "__main__":
     main()
+
