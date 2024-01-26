@@ -1,7 +1,7 @@
 # Alessio Cocco 2087635, Andrea Valentinuzzi 2090451, Giovanni Brejc 2096046
 #
 # Code subdivision
-#   Alessio  -  degree-cc-scatter
+#   Alessio  -  degree-cc-scatter-setup
 #   Andrea   -  eigen-betweenness-histograms
 #   Giovanni -  traingles-radars
 #   
@@ -118,8 +118,15 @@ def main():
     #  | || | | | | |_| | (_| | | |/ / (_| | |_| | (_) | | | |
     # |___|_| |_|_|\__|_|\__,_|_|_/___\__,_|\__|_|\___/|_| |_|
 
+    if not os.path.exists(DATA_PATH):
+        print("ERROR  |  Data folder not found, please create a folder named data and put the datasets inside it.")
+        return
+
     # Dataset selection
     datasets = [[file.replace('.edges', ''), DATA_PATH + file] for file in os.listdir(DATA_PATH) if file.endswith(".edges")] 
+    if len(datasets) == 0:
+        print("ERROR  |  No datasets found in the data folder, please put the datasets inside it.")
+        return
     print("Choose a dataset:")
     for i, dataset in enumerate(datasets):
         print(i, dataset[0])
@@ -131,7 +138,7 @@ def main():
     if input_ == 'y' or input_ == 'Y': skip = False
 
     # Create output folder
-    if not os.path.exists("./output"): os.makedirs("./output")
+    if not os.path.exists(OUTPUT_PATH): os.makedirs(OUTPUT_PATH)
 
     # Setup graph
     print("START  |  Reading graph", datasets[index][0], "...")
