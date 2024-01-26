@@ -1,6 +1,7 @@
 # Alessio Cocco 2087635, Andrea Valentinuzzi 2090451, Giovanni Brejc 2096046
 
 import networkit as nk
+import networkx as nx
 import matplotlib.pyplot as plt
 import os
 
@@ -31,8 +32,16 @@ def eigenCentrality(graph):
         return loadFromFile(dataset[0] + "_eigen_centrality")
     return nk.centrality.EigenvectorCentrality(graph).run()
 
+def countTriangles(graph):
+    if skip and os.path.exists(OUTPUT_PATH + dataset[0] + "_triangles.txt"):
+        return loadFromFile(dataset[0] + "_triangles")
+    if type(graph) is not nx.Graph:
+        graph = nk.nxadapter.nk2nx(graph)
+    return nx.triangles(graph)
+
 def plotCombinedMetrics(name, degrees, clustering):
-    plt.scatter(degrees, clustering, s = 0.1)
+    fig , ax = plt.subplots()
+    ax.scatter(degrees, clustering, s = 0.1)
     plt.title(name)
     plt.xlabel("Degree Centrality")
     plt.ylabel("Clustering coefficient")
@@ -122,7 +131,7 @@ def main():
 
     # 3. Plot in scatter plot centrality (x) and clustering coefficient (y)
     print("START  |  Plotting combined metrics...")
-    plotCombinedMetrics(datasets[index][0], dc, cc)
+    plotCombinedMetrics(datasets[index][0] + "Scatter" , dc, cc)
     print("DONE   |  Metrics PLot saved to file\n")
 
     # 4. Plot in histogram the distribution of centrality and clustering coefficient separately
@@ -132,6 +141,12 @@ def main():
     print("START  |  Plotting clustering coefficient histogram...")
     plotHistogram(datasets[index][0] + "CCHist", cc, "Clustering Coefficient")
     print("DONE   |  Clustering coefficient histogram saved to file\n")
+
+    # motifs
+    print("START  |  Computing traingles...")
+    triangles = countTriangles(graph)
+    saveToFile(datasets[index][0] + "_triangles", triangles)
+    print("DONE   |  Triangles saved\n")
     
 if __name__ == "__main__":
     main()
