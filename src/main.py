@@ -7,6 +7,7 @@
 #   
 #   The structure of the main was planned at the beginning of the project,
 #   each member following the structure has written the code correlated to his part.
+#   Still, most of the coding was done together using the Live Share extension for VSCode.
 
 import networkit as nk
 import networkx as nx
@@ -49,7 +50,6 @@ def countTriangles(graph):
     return nx.triangles(graph)
 
 def plotRadarChart(name, metrics):
-    
     # normalize
     for i in range(len(metrics)):
         max_, min_ = max(metrics[i]), min(metrics[i])
@@ -63,12 +63,13 @@ def plotRadarChart(name, metrics):
 
     # plot
     labels = ['Degree Centrality', 'Clustering Coefficient', 'Eigen Centrality', 'Betweenness Centrality', 'Triangles']
-    angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False)
+    angles = np.linspace(0, 2 * np.pi, len(labels), endpoint = False)
 
     fig = plt.figure()
-    ax = fig.add_subplot(111, polar=True)
-    ax.plot(angles, data, 'o-', linewidth=2)
-    ax.fill(angles, data, alpha=0.25)
+    ax = fig.add_subplot(111, polar = True)
+    ax.plot(angles, data, 'o-', linewidth = 1)
+    ax.fill(angles, data, alpha = 0.25)
+    ax.set_ylim(0, 0.7)
     ax.set_thetagrids(angles * 180 / np.pi, labels)
     ax.set_title(name)
     ax.grid(True)
@@ -116,13 +117,9 @@ def main():
     #  | || '_ \| | __| |/ _` | | |_  / _` | __| |/ _ \| '_ \ 
     #  | || | | | | |_| | (_| | | |/ / (_| | |_| | (_) | | | |
     # |___|_| |_|_|\__|_|\__,_|_|_/___\__,_|\__|_|\___/|_| |_|
-                                                           
-    if not os.path.exists(DATA_PATH):
-        print("ERROR  |  Data folder not found. Please create a folder named 'data' and put the datasets inside it.")
-        return
 
     # Dataset selection
-    datasets = [[file.replace('.edges', ''), DATA_PATH + file] for file in os.listdir(DATA_PATH) if file.endswith(".edges")]    
+    datasets = [[file.replace('.edges', ''), DATA_PATH + file] for file in os.listdir(DATA_PATH) if file.endswith(".edges")] 
     print("Choose a dataset:")
     for i, dataset in enumerate(datasets):
         print(i, dataset[0])
@@ -207,6 +204,5 @@ def main():
     plotRadarChart(datasets[index][0] + "RadarChart", [dc, cc, ec, bc, triangles])
     print("DONE   |  Mean radar chart computed\n")   
 
-    
 if __name__ == "__main__":
     main()
