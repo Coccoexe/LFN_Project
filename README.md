@@ -31,7 +31,7 @@ python3 main.py
 ```
 Make sure to have a data folder with at least a dataset otherwise the program won't work. 
 
-You can use setup.py to downlaod tested dataset
+You can use setup.py to download tested dataset
 
 ### Setup
 Setup.py is a file that automatically downloads and prepare the two dataset we used in our project.
