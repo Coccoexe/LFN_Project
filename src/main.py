@@ -1,8 +1,17 @@
 # Alessio Cocco 2087635, Andrea Valentinuzzi 2090451, Giovanni Brejc 2096046
+#
+# Code subdivision
+#   Alessio  -  degree-cc-scatter
+#   Andrea   -  eigen-betweenness-histograms
+#   Giovanni -  traingles-radars
+#   
+#   The structure of the main was planned at the beginning of the project,
+#   each member following the structure has written the code correlated to his part.
 
 import networkit as nk
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
 import os
 
 # Constants
@@ -39,6 +48,33 @@ def countTriangles(graph):
         graph = nk.nxadapter.nk2nx(graph)
     return nx.triangles(graph)
 
+def plotRadarChart(name, metrics):
+    
+    # normalize
+    for i in range(len(metrics)):
+        max_, min_ = max(metrics[i]), min(metrics[i])
+        for j in range(len(metrics[i])):
+            metrics[i][j] = (metrics[i][j] - min_) / (max_ - min_)
+
+    # compute mean
+    data = [0] * len(metrics)
+    for i in range(len(metrics)):
+        data[i] = sum(metrics[i]) / len(metrics[i])
+
+    # plot
+    labels = ['Degree Centrality', 'Clustering Coefficient', 'Eigen Centrality', 'Betweenness Centrality', 'Triangles']
+    angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, polar=True)
+    ax.plot(angles, data, 'o-', linewidth=2)
+    ax.fill(angles, data, alpha=0.25)
+    ax.set_thetagrids(angles * 180 / np.pi, labels)
+    ax.set_title(name)
+    ax.grid(True)
+    plt.savefig(OUTPUT_PATH + name + ".png")
+    return
+
 def plotCombinedMetrics(name, degrees, clustering):
     fig , ax = plt.subplots()
     ax.scatter(degrees, clustering, s = 0.1)
@@ -74,7 +110,13 @@ def loadFromFile(filename):
 def main():
     global skip
     global dataset
-
+    
+    #  ___       _ _   _       _ _          _   _             
+    # |_ _|_ __ (_) |_(_) __ _| (_)______ _| |_(_) ___  _ __  
+    #  | || '_ \| | __| |/ _` | | |_  / _` | __| |/ _ \| '_ \ 
+    #  | || | | | | |_| | (_| | | |/ / (_| | |_| | (_) | | | |
+    # |___|_| |_|_|\__|_|\__,_|_|_/___\__,_|\__|_|\___/|_| |_|
+                                                           
     if not os.path.exists(DATA_PATH):
         print("ERROR  |  Data folder not found. Please create a folder named 'data' and put the datasets inside it.")
         return
@@ -99,34 +141,38 @@ def main():
     graph = nk.readGraph(datasets[index][1], nk.Format.EdgeList, separator = ' ', firstNode = 0, continuous = False)
     print("DONE   |  Graph read!\n")
 
-    # 1. Compute degree centrality of each node
+    #                 _        _          
+    #  _ __ ___   ___| |_ _ __(_) ___ ___ 
+    # | '_ ` _ \ / _ \ __| '__| |/ __/ __|
+    # | | | | | |  __/ |_| |  | | (__\__ \
+    # |_| |_| |_|\___|\__|_|  |_|\___|___/
+
+    # degree centrality
     print("START  |  Computing degree centrality...")
     dc = degreeCentrality(graph)
     if type(dc) is not list: dc = dc.scores()
     saveToFile(datasets[index][0] + "_degree_centrality", dc)
     print("DONE   |  Degree centrality computed\n")
 
-    # 2. Compute clustering coefficient of each node
+    # clustering coefficient
     print("START  |  Computing clustering coefficient...")
     cc = clusteringCoefficient(graph)
     if type(cc) is not list: cc = cc.scores()
     saveToFile(datasets[index][0] + "_clustering_coefficient", cc)
     print("DONE   |  Clustering coefficient computed\n")
 
-    # 5. Compute eigen centrality of each node
+    # eigen centrality
     print("START  |  Computing eigen centrality...")
     ec = eigenCentrality(graph)
     if type(ec) is not list: ec = ec.scores()
     saveToFile(datasets[index][0] + "_eigen_centrality", ec)
-    plotHistogram(datasets[index][0] + "ECHist", ec, "Eigen Centrality")
     print("DONE   |  Eigen centrality computed\n")
 
-    # 6. Compute betweenness centrality of each node
+    # betweenness centrality
     print("START  |  Computing betweenness centrality...")
     bc = betweennessCentrality(graph)
     if type(bc) is not list: bc = bc.scores()
     saveToFile(datasets[index][0] + "_betweenness_centrality", bc)
-    plotHistogram(datasets[index][0] + "BCHist", bc, "Betweenness Centrality")
     print("DONE   |  Betweenness centrality computed\n")
 
     # traingles
@@ -135,23 +181,31 @@ def main():
     saveToFile(datasets[index][0] + "_triangles", triangles)
     print("DONE   |  Triangles saved\n")
 
-    # 3. Plot in scatter plot centrality (x) and clustering coefficient (y)
+    #        _       _       
+    #  _ __ | | ___ | |_ ___ 
+    # | '_ \| |/ _ \| __/ __|
+    # | |_) | | (_) | |_\__ \
+    # | .__/|_|\___/ \__|___/
+    # |_|  
+
+    # scatter plot degree centrality (x) and clustering coefficient (y)
     print("START  |  Plotting combined metrics...")
     plotCombinedMetrics(datasets[index][0] + "Scatter" , dc, cc)
     print("DONE   |  Metrics PLot saved to file\n")
 
-    # 4. Plot in histogram the distribution of centrality and clustering coefficient separately
-    print("START  |  Plotting degree centrality histogram...")
+    # histogram
+    print("START  |  Plotting and saving histograms...")
     plotHistogram(datasets[index][0] + "DCHist", dc, "Degree Centrality")
-    print("DONE   |  Degree centrality histogram saved to file\n")
-    print("START  |  Plotting clustering coefficient histogram...")
     plotHistogram(datasets[index][0] + "CCHist", cc, "Clustering Coefficient")
-    print("DONE   |  Clustering coefficient histogram saved to file\n")
-
-    # plot triangles histogram
-    print("START  |  Plotting triangles histogram...")
+    plotHistogram(datasets[index][0] + "ECHist", ec, "Eigen Centrality")
+    plotHistogram(datasets[index][0] + "BCHist", bc, "Betweenness Centrality")
     plotHistogram(datasets[index][0] + "TrianglesHist", triangles, "Triangles")
-    print("DONE   |  Triangles histogram saved to file\n")
+    print("DONE   |  Histograms saved\n")
+
+    # compute mean radar chart
+    print("START  |  Computing mean radar chart...")
+    plotRadarChart(datasets[index][0] + "RadarChart", [dc, cc, ec, bc, triangles])
+    print("DONE   |  Mean radar chart computed\n")   
 
     
 if __name__ == "__main__":
