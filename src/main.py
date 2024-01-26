@@ -129,6 +129,12 @@ def main():
     plotHistogram(datasets[index][0] + "BCHist", bc, "Betweenness Centrality")
     print("DONE   |  Betweenness centrality computed\n")
 
+    # traingles
+    print("START  |  Computing traingles...")
+    triangles = countTriangles(graph)
+    saveToFile(datasets[index][0] + "_triangles", triangles)
+    print("DONE   |  Triangles saved\n")
+
     # 3. Plot in scatter plot centrality (x) and clustering coefficient (y)
     print("START  |  Plotting combined metrics...")
     plotCombinedMetrics(datasets[index][0] + "Scatter" , dc, cc)
@@ -142,11 +148,11 @@ def main():
     plotHistogram(datasets[index][0] + "CCHist", cc, "Clustering Coefficient")
     print("DONE   |  Clustering coefficient histogram saved to file\n")
 
-    # motifs
-    print("START  |  Computing traingles...")
-    triangles = countTriangles(graph)
-    saveToFile(datasets[index][0] + "_triangles", triangles)
-    print("DONE   |  Triangles saved\n")
+    # plot triangles histogram
+    print("START  |  Plotting triangles histogram...")
+    plotHistogram(datasets[index][0] + "TrianglesHist", triangles, "Triangles")
+    print("DONE   |  Triangles histogram saved to file\n")
+
     
 if __name__ == "__main__":
     main()
